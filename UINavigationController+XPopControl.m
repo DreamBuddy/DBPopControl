@@ -123,11 +123,13 @@
         self.x_popGesture.delegate = self.X_PopGestureRecognizerDelegate;
         [self.x_popGesture addTarget:internalTarget action:internalAction];
         
-        self.interactivePopGestureRecognizer.enabled = NO;
-        
     }
     
-    [self x_pushViewController:viewController animated:animated];
+    self.interactivePopGestureRecognizer.enabled = NO;
+    
+    if (![self.viewControllers containsObject:viewController] && ![[self valueForKey:@"_isTransitioning"] boolValue]) {
+        [self x_pushViewController:viewController animated:animated];
+    }
 }
 
 - (X_PopGestureRecognizerDelegate *)X_PopGestureRecognizerDelegate
@@ -146,9 +148,9 @@
 -(BOOL)x_navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item{
     
     //防止 导航Bar  跟 Controller 切换 不协调的问题
-    if (self.viewControllers.count < navigationBar.items.count) {
-        return YES;
-    }
+//    if (self.viewControllers.count < navigationBar.items.count) {
+//        return YES;
+//    }
     
     UIViewController *topViewController = self.viewControllers.lastObject;
     
@@ -171,7 +173,7 @@
             }
         }
         
-        return NO;
+        return YES;
     }else{
         return [self x_navigationBar:navigationBar shouldPopItem:item];
     }
