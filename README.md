@@ -1,2 +1,2 @@
-# AOPBackBarButton
-自定义默认返回按钮 的action
+# XPopControl
+自定义控制导航栏返回按钮，以及pop侧滑手势
