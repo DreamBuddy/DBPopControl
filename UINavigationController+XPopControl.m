@@ -147,10 +147,10 @@
 
 -(BOOL)x_navigationBar:(UINavigationBar *)navigationBar shouldPopItem:(UINavigationItem *)item{
     
-    //防止 导航Bar  跟 Controller 切换 不协调的问题
-//    if (self.viewControllers.count < navigationBar.items.count) {
-//        return YES;
-//    }
+    //防止 导航Bar  跟 Controller 切换 不协调的问题 (如果是 手势出发的pop 在移动开始以后 topViewController 就已经变成底下的 Controller了)
+    if (self.viewControllers.count < navigationBar.items.count) {
+        return YES;
+    }
     
     UIViewController *topViewController = self.viewControllers.lastObject;
     
