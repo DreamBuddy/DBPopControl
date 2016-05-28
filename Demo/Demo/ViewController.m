@@ -24,7 +24,7 @@
     self.title = @"XPopControl Demo";
     
     NSInteger count = self.navigationController.viewControllers.count;
-    if (count) {
+    if (count > 1) {
         self.title = @(count).stringValue;
     }
     
