@@ -33,12 +33,7 @@
     UIViewController *topViewController = self.navigationController.viewControllers.lastObject;
     
     if (topViewController.x_HookGesture) {
-        
-        if (topViewController.x_HookGestureWannaBegin) {
-            topViewController.x_HookGestureWannaBegin();
-        }
-        
-        return NO;
+        return topViewController.x_HookGesture();
     }
     
     // Ignore when the active view controller doesn't allow interactive pop.
@@ -48,11 +43,14 @@
 //    }
     
     // Ignore when the beginning location is beyond max allowed initial distance to left edge.
+    CGFloat maxAllowedInitialDistance = topViewController.x_interactivePopMaxAllowedInitialDistanceToLeftEdge;
     CGPoint beginningLocation = [gestureRecognizer locationInView:gestureRecognizer.view];
     /**
      *  作者并没有实现 侧滑最大范围，若需要 可自行设置哦
      */
-    CGFloat maxAllowedInitialDistance = 100;
+    /**
+     *  默认是 全屏支持侧滑
+     */
     if (maxAllowedInitialDistance > 0 && beginningLocation.x > maxAllowedInitialDistance) {
         return NO;
     }
@@ -122,7 +120,10 @@
         SEL internalAction = NSSelectorFromString(@"handleNavigationTransition:");
         self.x_popGesture.delegate = self.X_PopGestureRecognizerDelegate;
         [self.x_popGesture addTarget:internalTarget action:internalAction];
+     
+//        [self.interactivePopGestureRecognizer removeTarget:internalTarget action:internalAction];
         
+        self.interactivePopGestureRecognizer.enabled = NO;
     }
     
     self.interactivePopGestureRecognizer.enabled = NO;
@@ -154,7 +155,7 @@
     
     UIViewController *topViewController = self.viewControllers.lastObject;
     
-    if (topViewController.x_HookBackBarButton) {
+    if (topViewController.x_HookBarButton) {
         
         for(UIView *subview in [navigationBar subviews]) {
             if(subview.alpha < 1.) {
@@ -164,8 +165,8 @@
             }
         }
         
-        if (topViewController.x_HookBarButtonCallBack) {
-            BOOL result = topViewController.x_HookBarButtonCallBack();
+        if (topViewController.x_HookBarButton) {
+            BOOL result = topViewController.x_HookBarButton();
             if (result) {
                 return [self x_navigationBar:navigationBar shouldPopItem:item];
             }else{
@@ -184,32 +185,47 @@
 @implementation UIViewController (XPopControl)
 
 #pragma 管理BackBarButton的Action
--(BOOL)x_HookBackBarButton{
-    return [objc_getAssociatedObject(self, _cmd) boolValue];
-}
--(void)setX_HookBackBarButton:(BOOL)x_HookBackBarButton{
-    objc_setAssociatedObject(self, @selector(x_HookBackBarButton), @(x_HookBackBarButton), OBJC_ASSOCIATION_ASSIGN);
-}
+//-(BOOL)x_HookBackBarButton{
+//    return [objc_getAssociatedObject(self, _cmd) boolValue];
+//}
+//-(void)setX_HookBackBarButton:(BOOL)x_HookBackBarButton{
+//    objc_setAssociatedObject(self, @selector(x_HookBackBarButton), @(x_HookBackBarButton), OBJC_ASSOCIATION_ASSIGN);
+//}
 
--(X_BOOLBlockNil)x_HookBarButtonCallBack{
+-(X_BOOLBlockNil)x_HookBarButton{
     return objc_getAssociatedObject(self, _cmd);
 }
--(void)setX_HookBarButtonCallBack:(X_BOOLBlockNil)x_HookBarButtonCallBack{
-    objc_setAssociatedObject(self, @selector(x_HookBarButtonCallBack), x_HookBarButtonCallBack, OBJC_ASSOCIATION_COPY_NONATOMIC);
+-(void)setX_HookBarButton:(X_BOOLBlockNil)x_HookBarButton{
+    objc_setAssociatedObject(self, @selector(x_HookBarButton), x_HookBarButton, OBJC_ASSOCIATION_COPY_NONATOMIC);
 }
 #pragma 管理Gesture 的 Action
--(BOOL)x_HookGesture{
-    return [objc_getAssociatedObject(self, _cmd) boolValue];
-}
--(void)setX_HookGesture:(BOOL)x_HookGesture{
-    objc_setAssociatedObject(self, @selector(x_HookGesture), @(x_HookGesture), OBJC_ASSOCIATION_ASSIGN);
-}
+//-(BOOL)x_HookGesture{
+//    return [objc_getAssociatedObject(self, _cmd) boolValue];
+//}
+//-(void)setX_HookGesture:(BOOL)x_HookGesture{
+//    objc_setAssociatedObject(self, @selector(x_HookGesture), @(x_HookGesture), OBJC_ASSOCIATION_ASSIGN);
+//}
 
--(X_BlockNil)x_HookGestureWannaBegin{
+-(X_BOOLBlockNil)x_HookGesture{
     return objc_getAssociatedObject(self, _cmd);
 }
--(void)setX_HookGestureWannaBegin:(X_BlockNil)x_HookGestureWannaBegin{
-    objc_setAssociatedObject(self, @selector(x_HookGestureWannaBegin), x_HookGestureWannaBegin, OBJC_ASSOCIATION_COPY_NONATOMIC);
+-(void)setX_HookGesture:(X_BOOLBlockNil)x_HookGesture{
+    objc_setAssociatedObject(self, @selector(x_HookGesture), x_HookGesture, OBJC_ASSOCIATION_COPY_NONATOMIC);
+}
+
+#pragma 设置侧滑距离
+- (CGFloat)x_interactivePopMaxAllowedInitialDistanceToLeftEdge
+{
+#if CGFLOAT_IS_DOUBLE
+    return [objc_getAssociatedObject(self, _cmd) doubleValue];
+#else
+    return [objc_getAssociatedObject(self, _cmd) floatValue];
+#endif
+}
+
+- (void)setX_interactivePopMaxAllowedInitialDistanceToLeftEdge:(CGFloat)distance
+{
+    objc_setAssociatedObject(self, @selector(x_interactivePopMaxAllowedInitialDistanceToLeftEdge), @(MAX(0, distance)), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
 @end

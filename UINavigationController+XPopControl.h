@@ -14,7 +14,7 @@ typedef void(^X_BlockNil)(void);
 @interface UINavigationController (XPopControl)
 
 /**
- *  侧滑手势 通过控制 enable 来达到是否可以侧滑
+ *  侧滑手势 (取代了系统默认的gesture)
  */
 @property (nonatomic ,retain ,readonly) UIPanGestureRecognizer *x_popGesture;
 
@@ -22,10 +22,21 @@ typedef void(^X_BlockNil)(void);
 
 @interface UIViewController (XPopControl)
 
-@property (nonatomic ,assign) BOOL x_HookBackBarButton;
-@property (nonatomic ,copy) X_BOOLBlockNil x_HookBarButtonCallBack;
+/**
+ *  实现Block达到控制BackBarButton
+ *  return 返回值 YES 允许 ， NO 不允许 在Block代码块中 设置 逻辑
+ */
+@property (nonatomic ,copy) X_BOOLBlockNil x_HookBarButton;
 
-@property (nonatomic ,assign) BOOL x_HookGesture;
-@property (nonatomic ,copy) X_BlockNil x_HookGestureWannaBegin;
+/**
+ *  实现Block达到控制侧滑手势
+ *  return 返回值 YES 允许 ， NO 不允许 在Block代码块中 设置 逻辑
+ */
+@property (nonatomic ,copy) X_BOOLBlockNil x_HookGesture;
+
+/**
+ *  设置 侧滑最大区域 (从左到右)
+ */
+@property (nonatomic, assign) CGFloat x_interactivePopMaxAllowedInitialDistanceToLeftEdge;
 
 @end
