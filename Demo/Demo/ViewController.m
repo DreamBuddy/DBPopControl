@@ -23,6 +23,11 @@
     // Do any additional setup after loading the view, typically from a nib.
     self.title = @"XPopControl Demo";
     
+    NSInteger count = self.navigationController.viewControllers.count;
+    if (count) {
+        self.title = @(count).stringValue;
+    }
+    
     self.view.backgroundColor = [UIColor whiteColor];
     
     UIButton *pushButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -64,6 +69,12 @@
     [alert addAction:[UIAlertAction actionWithTitle:@"是的" style:0 handler:^(UIAlertAction * _Nonnull action) {
         
         [self.navigationController popViewControllerAnimated:YES];
+        
+    }]];
+    
+    [alert addAction:[UIAlertAction actionWithTitle:@"不" style:0 handler:^(UIAlertAction * _Nonnull action) {
+        
+        
         
     }]];
     
